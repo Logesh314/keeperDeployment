@@ -1,30 +1,21 @@
 import express from "express";
 import cors from "cors";             
-import pg from "pg";
+import pkg from "pg";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
 dotenv.config();
-
+const { Pool } = pkg;
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const pool = new pg.Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
 
-pool.connect((err) => {
-  if (err) {
-    console.error('Connection error', err.stack);
-  } else {
-    console.log('Connected to database');
-  }
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+
 });
 
 
