@@ -1,5 +1,5 @@
 import express from "express";
-import cors from "cors";               // optional in prod (same origin), handy in dev
+import cors from "cors";             
 import pkg from "pg";
 import dotenv from "dotenv";
 import path from "path";
@@ -12,14 +12,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// --- DB (Railway Postgres) ---
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // set on Railway
-  // For Railway Postgres, SSL is typically not required; leave ssl out.
-  // If you later use Neon/Supabase, you can add: ssl: { rejectUnauthorized: false }
+  connectionString: process.env.DATABASE_URL,
+
 });
 
-// --- API ROUTES ---
+
 app.get("/notes", async (_req, res) => {
   try {
     const result = await pool.query("SELECT * FROM keeper ORDER BY id DESC");
@@ -51,16 +50,16 @@ app.delete("/notes/:id", async (req, res) => {
   }
 });
 
-// --- SERVE Vite build from /dist ---
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const clientBuild = path.join(__dirname, "dist"); // Vite output
+const clientBuild = path.join(__dirname, "dist"); 
 
 app.use(express.static(clientBuild));
 app.get("*", (_req, res) => {
   res.sendFile(path.join(clientBuild, "index.html"));
 });
 
-// --- PORT from env (Railway sets PORT) ---
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on :${PORT}`));
